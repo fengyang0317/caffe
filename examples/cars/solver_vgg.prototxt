@@ -1,0 +1,23 @@
+net: "./vgg_train_val.prototxt"
+test_iter: 500
+test_interval: 500 
+test_initialization: true
+
+
+max_iter: 100000	
+base_lr: 0.001			
+lr_policy: "step"
+gamma: 0.1
+stepsize: 50000
+
+momentum: 0.9			
+weight_decay: 0.0002 	
+display: 20
+
+snapshot: 5000
+snapshot_prefix: "vgg_finetune_web_car"
+solver_mode: GPU
+
+device_id: 0 
+
+random_seed: 34234562302122                 
