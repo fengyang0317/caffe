@@ -346,6 +346,8 @@ message LayerParameter {
 
   // Parameters shared by loss layers.
   optional LossParameter loss_param = 101;
+  optional bool visualise = 200 [ default = false ];
+  optional uint32 visualise_channel = 201 [ default = 0 ];
 
   // Layer type-specific parameters.
   //
@@ -1075,6 +1077,7 @@ message V1LayerParameter {
     DROPOUT = 6;
     DUMMY_DATA = 32;
     EUCLIDEAN_LOSS = 7;
+	EUCLIDEAN_WEIGHTED_LOSS = 41;
     ELTWISE = 25;
     EXP = 38;
     FLATTEN = 8;
