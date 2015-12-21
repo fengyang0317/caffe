@@ -97,8 +97,8 @@ for fi in range(0, len(lfile), N):
         part[:,1] = part[:,1] - rec[1]
         la = np.zeros((part.shape[0], map_size, map_size))
         for i in range(part.shape[0]):
-            x = (map_size - 1) * part[i][0] / frame.shape[1]
-            y = (map_size - 1) * part[i][1] / frame.shape[0]
+            y = (map_size - 1) * part[i][0] / frame.shape[1]
+            x = (map_size - 1) * part[i][1] / frame.shape[0]
             x = int(round(x))
             y = int(round(y))
             if x < 0 or y < 0 or x > map_size-1 or y > map_size-1:

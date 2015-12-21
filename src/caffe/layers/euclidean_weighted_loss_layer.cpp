@@ -35,6 +35,7 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
       cv::namedWindow("pre", CV_WINDOW_AUTOSIZE);
       cv::namedWindow("gt", CV_WINDOW_AUTOSIZE);
       cv::namedWindow("img", CV_WINDOW_AUTOSIZE);
+      cv::namedWindow("img_fuse", CV_WINDOW_AUTOSIZE);
       const int num_images = bottom[1]->num();
       const int label_height = bottom[1]->height();
       const int label_width = bottom[1]->width();
@@ -42,10 +43,11 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
       const int img_height = bottom[2]->height();
       const int img_width = bottom[2]->width();
       const int img_channels = bottom[2]->channels();
-      cv::Mat pre_map, gt_map, img;
+      cv::Mat pre_map, gt_map, img, img_f;
       pre_map = cv::Mat::ones(label_height, (label_width + 1) * label_channels, CV_32FC1);
       gt_map = cv::Mat::ones(label_height, (label_width + 1) * label_channels, CV_32FC1);
       img = cv::Mat::zeros(img_height, img_width, CV_32FC3);
+      img_f = cv::Mat::zeros(img_height, img_width, CV_32FC3);
       int image_idx;
       const int img_channel_size = img_height * img_width;
       const int img_img_size = img_channel_size * img_channels;
@@ -68,6 +70,7 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
                   {
                       image_idx = n * img_img_size + c * img_channel_size + i * img_height + j;
                       img.at<cv::Vec3f>(i, j)[c] = (float) (b2[image_idx] + mean_val[c]) / 255;
+                      img_f.at<cv::Vec3f>(i, j)[c] = (float) (b2[image_idx] + mean_val[c]) / 255;
                   }
               }
           }
@@ -78,8 +81,8 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
                   for(int j = 0; j < label_width; j++)
                   {
                       image_idx = n * label_img_size + c * label_channel_size + i * label_height + j;
-                      pre_map.at<float>(j, i + c * (label_width + 1)) = (float) b0[image_idx];
-                      gt_map.at<float>(j, i + c * (label_width + 1)) = (float) b1[image_idx];
+                      pre_map.at<float>(i, j + c * (label_width + 1)) = (float) b0[image_idx];
+                      gt_map.at<float>(i, j + c * (label_width + 1)) = (float) b1[image_idx];
                   }
               }
           }

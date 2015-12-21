@@ -97,13 +97,17 @@ for fi in range(0, len(lfile), N):
         part[:,1] = part[:,1] - rec[1]
         la = np.zeros((part.shape[0], map_size, map_size))
         for i in range(part.shape[0]):
-            x = (map_size - 1) * part[i][0] / frame.shape[1]
-            y = (map_size - 1) * part[i][1] / frame.shape[0]
+            y = (map_size - 1) * part[i][0] / frame.shape[1]
+            x = (map_size - 1) * part[i][1] / frame.shape[0]
             x = int(round(x))
             y = int(round(y))
             if x < 0 or y < 0 or x > map_size-1 or y > map_size-1:
                 continue
             la[i] = gau[map_size-1-x:map_size*2-1-x,map_size-1-y:map_size*2-1-y]
+            #hm = cv2.resize(la[i], (img_size, img_size));
+            #fu = res/255.0 + hm
+            #cv2.imshow('fuse', fu.transpose((1,2,0)))
+            #cv2.waitKey(0)
             #cv2.imshow('b',la[i])
             #cv2.waitKey(0)
         datum = caffe.io.array_to_datum(la)
