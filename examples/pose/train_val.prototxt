@@ -392,7 +392,7 @@ layer {
   bottom: "label"
   bottom: "data"  
   top: "loss_heatmap"  
-  visualise: true
+  visualise: false
   loss_weight: 1  
 }
 
@@ -601,7 +601,7 @@ layer {
   bottom: "label"
   bottom: "data"  
   top: "loss_fusion"
-#visualise: true
-  visualise_channel: 11
+  visualise: true
+  visualise_channel: 5
   loss_weight: 3
 }

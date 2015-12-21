@@ -47,7 +47,6 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
       pre_map = cv::Mat::ones(label_height, (label_width + 1) * label_channels, CV_32FC1);
       gt_map = cv::Mat::ones(label_height, (label_width + 1) * label_channels, CV_32FC1);
       img = cv::Mat::zeros(img_height, img_width, CV_32FC3);
-      img_f = cv::Mat::zeros(img_height, img_width, CV_32FC3);
       int image_idx;
       const int img_channel_size = img_height * img_width;
       const int img_img_size = img_channel_size * img_channels;
@@ -70,10 +69,10 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
                   {
                       image_idx = n * img_img_size + c * img_channel_size + i * img_height + j;
                       img.at<cv::Vec3f>(i, j)[c] = (float) (b2[image_idx] + mean_val[c]) / 255;
-                      img_f.at<cv::Vec3f>(i, j)[c] = (float) (b2[image_idx] + mean_val[c]) / 255;
                   }
               }
           }
+          cv::cvtColor(img, img_f, CV_BGR2GRAY);
           for (int c = 0; c < label_channels; c++)
           {
               for(int i = 0; i < label_height; i++)
@@ -85,8 +84,13 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
                       gt_map.at<float>(i, j + c * (label_width + 1)) = (float) b1[image_idx];
                   }
               }
+              cv::Mat vm = gt_map(cv::Rect(c * (label_width + 1), 0, label_width, label_height));
+              cv::resize(vm, vm, cv::Size(img_height, img_width));
+              img_f += vm;
           }
+          //int vc = this->layer_param_.visualise_channel();
           cv::imshow("img",img);
+          cv::imshow("img_fuse", img_f);
 		  cv::resize(gt_map, gt_map, cv::Size(0, 0), 2, 2); 
           cv::imshow("gt",gt_map);
 		  cv::resize(pre_map, pre_map, cv::Size(0, 0), 2, 2); 
