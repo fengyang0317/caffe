@@ -3,6 +3,7 @@
 #include "caffe/layers/euclidean_weighted_loss_layer.hpp"
 #include "caffe/util/math_functions.hpp"
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/opencv.hpp>
 
 namespace caffe {
 
@@ -42,7 +43,7 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
       const int img_width = bottom[2]->width();
       const int img_channels = bottom[2]->channels();
       cv::Mat pre_map, gt_map, img;
-      pre_map = cv::Mat::zeros(label_height, label_width * label_channels, CV_32FC1);
+      pre_map = cv::Mat::ones(label_height, (label_width + 1) * label_channels, CV_32FC1);
       gt_map = cv::Mat::ones(label_height, (label_width + 1) * label_channels, CV_32FC1);
       img = cv::Mat::zeros(img_height, img_width, CV_32FC3);
       int image_idx;
@@ -77,13 +78,15 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
                   for(int j = 0; j < label_width; j++)
                   {
                       image_idx = n * label_img_size + c * label_channel_size + i * label_height + j;
-                      pre_map.at<float>(j, i + c * label_width) = (float) b0[image_idx];
+                      pre_map.at<float>(j, i + c * (label_width + 1)) = (float) b0[image_idx];
                       gt_map.at<float>(j, i + c * (label_width + 1)) = (float) b1[image_idx];
                   }
               }
           }
           cv::imshow("img",img);
+		  cv::resize(gt_map, gt_map, cv::Size(0, 0), 2, 2); 
           cv::imshow("gt",gt_map);
+		  cv::resize(pre_map, pre_map, cv::Size(0, 0), 2, 2); 
           cv::imshow("pre",pre_map);
           cv::waitKey(0);
       }
