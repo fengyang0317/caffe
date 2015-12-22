@@ -44,8 +44,6 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
       const int img_width = bottom[2]->width();
       const int img_channels = bottom[2]->channels();
       cv::Mat pre_map, gt_map, img, img_f;
-      pre_map = cv::Mat::ones(label_height, (label_width + 1) * label_channels, CV_32FC1);
-      gt_map = cv::Mat::ones(label_height, (label_width + 1) * label_channels, CV_32FC1);
       img = cv::Mat::zeros(img_height, img_width, CV_32FC3);
       int image_idx;
       const int img_channel_size = img_height * img_width;
@@ -61,6 +59,8 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
 
       for (int n = 0; n < num_images; n++)
       {
+          pre_map = cv::Mat::ones(label_height, (label_width + 1) * label_channels, CV_32FC1);
+          gt_map = cv::Mat::ones(label_height, (label_width + 1) * label_channels, CV_32FC1);
           for (int c = 0; c < img_channels; c++)
           {
               for(int i = 0; i < img_height; i++)
@@ -91,9 +91,9 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
           //int vc = this->layer_param_.visualise_channel();
           cv::imshow("img",img);
           cv::imshow("img_fuse", img_f);
-		  cv::resize(gt_map, gt_map, cv::Size(0, 0), 2, 2); 
+		  cv::resize(gt_map, gt_map, cv::Size(0, 0), 4, 4); 
           cv::imshow("gt",gt_map);
-		  cv::resize(pre_map, pre_map, cv::Size(0, 0), 2, 2); 
+		  cv::resize(pre_map, pre_map, cv::Size(0, 0), 4, 4); 
           cv::imshow("pre",pre_map);
           cv::waitKey(0);
       }
