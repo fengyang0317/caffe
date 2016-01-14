@@ -1,0 +1,1 @@
+/home/yfeng23/lab/dataset/gait/DatasetB/genmeancnn.m

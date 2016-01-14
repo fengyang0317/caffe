@@ -44,7 +44,10 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
       const int img_width = bottom[2]->width();
       const int img_channels = bottom[2]->channels();
       cv::Mat pre_map, gt_map, img, img_f;
-      img = cv::Mat::zeros(img_height, img_width, CV_32FC3);
+      if (img_channels == 3)
+    	  img = cv::Mat::zeros(img_height, img_width, CV_32FC3);
+      else
+    	  img = cv::Mat::zeros(img_height, img_width, CV_32FC1);
       int image_idx;
       const int img_channel_size = img_height * img_width;
       const int img_img_size = img_channel_size * img_channels;
@@ -68,11 +71,17 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
                   for(int j = 0; j < img_width; j++)
                   {
                       image_idx = n * img_img_size + c * img_channel_size + i * img_height + j;
-                      img.at<cv::Vec3f>(i, j)[c] = (float) (b2[image_idx] + mean_val[c]) / 255;
+                      if (img_channels == 3)
+                    	  img.at<cv::Vec3f>(i, j)[c] = (float) (b2[image_idx] + mean_val[c]) / 255;
+                      else
+                    	  img.at<float>(i, j) = (float) (b2[image_idx] + mean_val[c]) / 255;
                   }
               }
           }
-          cv::cvtColor(img, img_f, CV_BGR2GRAY);
+          if (img_channels == 3)
+        	  cv::cvtColor(img, img_f, CV_BGR2GRAY);
+          else
+        	  img.copyTo(img_f);
           for (int c = 0; c < label_channels; c++)
           {
               for(int i = 0; i < label_height; i++)
@@ -86,14 +95,15 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
               }
               cv::Mat vm = gt_map(cv::Rect(c * (label_width + 1), 0, label_width, label_height));
               cv::resize(vm, vm, cv::Size(img_height, img_width));
+              //LOG(INFO) << "fuse channels " << img_f.channels();
               img_f += vm;
           }
           //int vc = this->layer_param_.visualise_channel();
           cv::imshow("img",img);
           cv::imshow("img_fuse", img_f);
-		  cv::resize(gt_map, gt_map, cv::Size(0, 0), 4, 4); 
+		  cv::resize(gt_map, gt_map, cv::Size(0, 0), 4, 4);
           cv::imshow("gt",gt_map);
-		  cv::resize(pre_map, pre_map, cv::Size(0, 0), 4, 4); 
+		  cv::resize(pre_map, pre_map, cv::Size(0, 0), 4, 4);
           cv::imshow("pre",pre_map);
           cv::waitKey(0);
       }
