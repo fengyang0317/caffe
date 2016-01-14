@@ -9,10 +9,7 @@ layer {
   }
   transform_param {
     crop_size: 256
-#mean_file: "mean_val.binaryproto"
-	mean_value: 84.6888
-    mean_value: 91.7211
-    mean_value: 140.382
+    mean_value: 112.512
   }
   data_param {
     source: "lmdb_train_data"
@@ -43,14 +40,11 @@ layer {
   }
   transform_param {
     crop_size: 256
-#mean_file: "mean_val.binaryproto"
-	mean_value: 84.6888
-    mean_value: 91.7211
-    mean_value: 140.382
+    mean_value: 112.512
   }
   data_param {
     source: "lmdb_val_data"
-    batch_size: 1
+    batch_size: 10
     backend: LMDB
   }
 }
@@ -63,7 +57,7 @@ layer {
   }
   data_param {
     source: "lmdb_val_label"
-    batch_size: 1
+    batch_size: 10
     backend: LMDB
   }
 }
