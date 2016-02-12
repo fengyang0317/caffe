@@ -5,7 +5,7 @@ import numpy as np
 sys.path.insert(0, '../../python')
 import caffe
 
-isColor = False
+isColor = True
 isVal = False
 
 def makerect(rec, shape):
@@ -25,32 +25,15 @@ def makerect(rec, shape):
             rec[1] = shape[0] - rec[3]
     return rec
 
-gaitdir = '/home/yfeng23/lab/dataset/gait/DatasetB/'
+gaitdir = '/home/yfeng23/lab/dataset/cmu_mobo/moboJpg/'
 def getbg():
-    person = np.random.randint(1, 125)
-    angle = np.random.randint(11) * 18
-    vid = cv2.VideoCapture('%svideos/%03d-bkgrd-%03d.avi' % (gaitdir, person, angle))
-    fl = os.listdir('%ssilhouettes/%03d/nm-01/%03d' % (gaitdir, person, angle))
-    if len(fl) == 0:
-        print 're 0'
-        return getbg()
-    nf = np.random.randint(len(fl))
-    silh = cv2.imread('%ssilhouettes/%03d/nm-01/%03d/%s' % (gaitdir, person, angle, fl[nf]))
-    ho = np.sum(silh, 0)
-    ve = np.sum(silh, 1)
-    if np.nonzero(ve)[0].shape[0] < 100 or np.nonzero(ho)[0].shape[0] < 50:
-        print 're 1'
-        return getbg()
-    top = np.min(np.nonzero(ve))
-    h = np.max(np.nonzero(ve)) - top + 1
-    left = np.min(np.nonzero(ho))
-    w = np.max(np.nonzero(ho)) - left + 1
-    rec = makerect([left, top, w, h], silh.shape)
-    suc, im = vid.read()
-    if ~isColor:
-        im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    assert suc
-    return im[rec[1]:rec[1]+rec[3],rec[0]:rec[0]+rec[2]]
+    people = os.listdir(gaitdir)
+    pid = np.random.randint(len(people))
+    angles = os.listdir(gaitdir + people[pid] + '/bgImage')
+    aid = np.random.randint(len(angles))
+    bgfile = os.listdir(gaitdir + people[pid] + '/bgImage/' + angles[aid])
+    bg = cv2.imread(gaitdir + people[pid] + '/bgImage/' + angles[aid] + '/' + bgfile)
+    return bg
 
 img_size = 260
 map_size = 32
@@ -148,7 +131,6 @@ for fi in range(0, len(lfile), N):
         bg = getbg()
         bg = cv2.resize(bg, (img_size, img_size), interpolation = cv2.INTER_LINEAR)
         res[bgmask==0] = bg[bgmask==0]
-        res[bgmask!=0] = (res[bgmask!=0] - np.mean(res[bgmask!=0]))*20.0/np.std(res[bgmask!=0])+65
         #print np.mean(res[bgmask!=0])
         #cv2.imshow('a', res)
         #cv2.waitKey()
