@@ -144,7 +144,8 @@ for fi in range(0, len(lfile), N):
         part[:,0] = part[:,0] - rec[0]
         part[:,1] = part[:,1] - rec[1]
         la = np.zeros((part.shape[0], map_size, map_size))
-        for i in range(part.shape[0]):
+        #for i in range(part.shape[0]):
+        for i in [0, 2, 3, 7, 8, 14, 17, 18, 19, 25, 26, 27]:
             y = (map_size - 1) * part[i][0] / frame.shape[1]
             x = (map_size - 1) * part[i][1] / frame.shape[0]
             x = int(round(x))
