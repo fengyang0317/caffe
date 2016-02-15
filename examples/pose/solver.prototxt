@@ -13,4 +13,4 @@ momentum: 0.9
 weight_decay: 0.0005
 snapshot: 5000
 snapshot_prefix: "posenet_train"
-solver_mode: GPU
+solver_mode: CPU

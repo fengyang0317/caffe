@@ -209,7 +209,7 @@ layer {
 layer {
   name: "conv4"
   type: "Convolution"
-  bottom: "pool3"
+  bottom: "conv3"
   top: "conv4"
   param {
     lr_mult: 1
@@ -403,7 +403,7 @@ layer {
 layer {
   name: "concat_fusion"
   type: "Concat"
-  bottom: "pool3"
+  bottom: "conv3"
   bottom: "conv7"
   top: "concat_fusion"
   concat_param {
