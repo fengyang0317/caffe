@@ -6,7 +6,8 @@ sys.path.insert(0, '../../python')
 import caffe
 
 isColor = True
-isVal = False
+isVal = True
+use = [0, 2, 3, 7, 8, 14, 17, 18, 19, 25, 26, 27]
 
 def makerect(rec, shape):
     if rec[2] < rec[3]:
@@ -143,11 +144,11 @@ for fi in range(0, len(lfile), N):
         #print part.shape
         part[:,0] = part[:,0] - rec[0]
         part[:,1] = part[:,1] - rec[1]
-        la = np.zeros((part.shape[0], map_size, map_size))
+        la = np.zeros((len(use), map_size, map_size))
         #for i in range(part.shape[0]):
-        for i in [0, 2, 3, 7, 8, 14, 17, 18, 19, 25, 26, 27]:
-            y = (map_size - 1) * part[i][0] / frame.shape[1]
-            x = (map_size - 1) * part[i][1] / frame.shape[0]
+        for i in xrange(len(use)):
+            y = (map_size - 1) * part[use[i]][0] / frame.shape[1]
+            x = (map_size - 1) * part[use[i]][1] / frame.shape[0]
             x = int(round(x))
             y = int(round(y))
             if x < 0 or y < 0 or x > map_size-1 or y > map_size-1:
