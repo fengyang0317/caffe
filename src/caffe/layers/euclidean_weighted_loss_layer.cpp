@@ -101,9 +101,9 @@ void EuclideanWeightedLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
           //int vc = this->layer_param_.visualise_channel();
           cv::imshow("img",img);
           cv::imshow("img_fuse", img_f);
-		  cv::resize(gt_map, gt_map, cv::Size(0, 0), 4, 4);
+		  cv::resize(gt_map, gt_map, cv::Size(0, 0), 2, 2);
           cv::imshow("gt",gt_map);
-		  cv::resize(pre_map, pre_map, cv::Size(0, 0), 4, 4);
+		  cv::resize(pre_map, pre_map, cv::Size(0, 0), 2, 2);
           cv::imshow("pre",pre_map);
           cv::waitKey(0);
       }

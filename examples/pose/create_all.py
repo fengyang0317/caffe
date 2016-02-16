@@ -6,7 +6,7 @@ sys.path.insert(0, '../../python')
 import caffe
 
 isColor = True
-isVal = True
+isVal = False
 use = [0, 2, 3, 7, 8, 14, 17, 18, 19, 25, 26, 27]
 
 def makerect(rec, shape):
@@ -114,6 +114,8 @@ for fi in range(0, len(lfile), N):
                 rec[1] = frame.shape[0] - rec[3]
         frame=frame[rec[1]:rec[1]+rec[3],rec[0]:rec[0]+rec[2]]
         res = cv2.resize(frame, (img_size, img_size), interpolation = cv2.INTER_LINEAR)
+        cv2.imwrite('example.png', res)
+        exit()
         '''
         f = h5py.File(matdir + lfile[tu[0]])
         d = f['bgmask']
