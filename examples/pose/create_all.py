@@ -5,33 +5,34 @@ import numpy as np
 sys.path.insert(0, '../../python')
 import caffe
 
-isColor = True
-isVal = False
-use = [0, 2, 3, 7, 8, 14, 17, 18, 19, 25, 26, 27]
 
 def makerect(rec, shape):
+    lrec = []
+    rec[0] = max(0, rec[0])
+    rec[1] = max(0, rec[1])
+    rec[2] = min(rec[2], shape[1] - rec[0])
+    rec[3] = min(rec[3], shape[0] - rec[1])
+    if rec[2] == rec[3]:
+        lrec.append(rec)
+        return lrec
+    r1 = rec
+    r2 = rec
     if rec[2] < rec[3]:
-        rec[0] = rec[0] - (rec[3]-rec[2])/2
-        rec[2] = rec[3]
-        if rec[0] < 0:
-            rec[0] = 0
-        if rec[0] + rec[2] > shape[1]:
-            rec[0] = shape[1] - rec[2]
+        r1[3] = r1[2]
+        r2[1] += r2[3] - r2[2]
+        r2[3] = r2[2]
     elif rec[2] > rec[3]:
-        rec[1] = rec[1] - (rec[2]-rec[3])/2
-        rec[3] = rec[2]
-        if rec[1] < 0:
-            rec[1] = 0
-        if rec[1] + rec[3] > shape[0]:
-            rec[1] = shape[0] - rec[3]
-    return rec
+        r1[2] = r1[3]
+        r2[0] += r2[2] - r2[3]
+        r2[2] = r2[3]
+    lrec.append(r1)
+    lrec.append(r2)
+    return lrec
 
-bgdir = '/home/yfeng23/lab/dataset/gait/DatasetB/'
-def getbg():
-    pass
+dbdir = '/home/yfeng23/lab/dataset/mpii_human_pose_v1_u12_2/'
 
 img_size = 260
-map_size = 64
+map_size = 32
 
 a = np.arange(1-map_size, map_size)
 a = a*a
@@ -45,135 +46,126 @@ gau = gau * 4
 #cv2.waitKey(0)
 #gau = gau/gau[63,63]
 
-if isVal:
-    matdir = '/home/yfeng23/lab/pose/Release-v1.1/H36MDemo/val/'
-    train = lmdb.open('lmdb_val_data', map_size=int(1e12))
-    label = lmdb.open('lmdb_val_label', map_size=int(1e12))
-else:
-    matdir = '/home/yfeng23/lab/pose/Release-v1.1/H36MDemo/data/'
-    train = lmdb.open('lmdb_train_data', map_size=int(1e12))
-    label = lmdb.open('lmdb_train_label', map_size=int(1e12))
-id = 0
-if isColor:
-    mean_val = np.zeros((3, img_size, img_size))
-else:
-    mean_val = np.zeros((img_size, img_size))
-train_txn = train.begin(write=True)
-label_txn = label.begin(write=True)
-N = 200
+val_data = lmdb.open('lmdb_val_data', map_size=int(1e12))
+val_label = lmdb.open('lmdb_val_label', map_size=int(1e12))
+train_data = lmdb.open('lmdb_train_data', map_size=int(1e12))
+train_label = lmdb.open('lmdb_train_label', map_size=int(1e12))
+tid = 0
+vid = 0
+tdata_txn = train_data.begin(write=True)
+tlabel_txn = train_label.begin(write=True)
+vdata_txn = val_data.begin(write=True)
+vlabel_txn = val_label.begin(write=True)
 
-lfile = os.listdir(matdir)
-random.shuffle(lfile)
-lvals = []
-lrect = []
-for fi in range(0, len(lfile), N):
-    lframe = []
-    lcap = [None] * fi
-    for i in range(fi, fi+N):
-        if i == len(lfile):
-            break
-        f = h5py.File(matdir + lfile[i])
-        rect = np.array(f['rect']).transpose()
-        pa = str(''.join(map(unichr, f['Path'][:])))
-        na = str(''.join(map(unichr, f['Name'][:])))
-        lcap.append(cv2.VideoCapture(pa + '/Videos/' + na +'.mp4'))
-        lvals.append(np.array(f['vals']).transpose())
-        lrect.append(rect)
-        for j in range(0, rect.shape[0]-2, 10):
-            lframe.append((i, j))
-    random.shuffle(lframe)
-
-    for tu in lframe:
-        print str(id) + ' ' + str(tu)
-        cap = lcap[tu[0]]
-        assert cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, tu[1])
-        suc, frame = cap.read()
-        assert suc
-        if frame.shape[1] == 0:
-            suc, frame = cap.read()
-            assert suc
-        assert frame.shape[0] > 999
-        assert frame.shape[1] > 999
-        assert frame.shape[2] == 3
-        if not isColor:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        rec = lrect[tu[0]][tu[1]].astype(int)
-        if rec[2] < rec[3]:
-            rec[0] = rec[0] - (rec[3]-rec[2])/2
-            rec[2] = rec[3]
-            if rec[0] < 0:
-                rec[0] = 0
-            if rec[0] + rec[2] > frame.shape[1]:
-                rec[0] = frame.shape[1] - rec[2]
-        elif rec[2] > rec[3]:
-            rec[1] = rec[1] - (rec[2]-rec[3])/2
-            rec[3] = rec[2]
-            if rec[1] < 0:
-                rec[1] = 0
-            if rec[1] + rec[3] > frame.shape[0]:
-                rec[1] = frame.shape[0] - rec[3]
-        frame=frame[rec[1]:rec[1]+rec[3],rec[0]:rec[0]+rec[2]]
-        res = cv2.resize(frame, (img_size, img_size), interpolation = cv2.INTER_LINEAR)
-        cv2.imwrite('example.png', res)
-        exit()
-        '''
-        f = h5py.File(matdir + lfile[tu[0]])
-        d = f['bgmask']
-        e = f[d[tu[1]][0]]
-        bg = np.array(e)
-        bg = bg.transpose()
-        bg = bg[rec[1]:rec[1]+rec[3],rec[0]:rec[0]+rec[2]]
-        bgmask = cv2.resize(bg, (img_size, img_size), interpolation = cv2.INTER_LINEAR)
-        bg = getbg()
-        bg = cv2.resize(bg, (img_size, img_size), interpolation = cv2.INTER_LINEAR)
-        res[bgmask==0] = bg[bgmask==0]
-        res[bgmask!=0] = (res[bgmask!=0] - np.mean(res[bgmask!=0]))*20.0/np.std(res[bgmask!=0])+65
-        '''
-        #cv2.imshow('a', frame)
-        #cv2.waitKey(0)
-        #print np.mean(res[bgmask!=0])
-        #cv2.imshow('a', res)
-        #cv2.waitKey()
-        if not isColor:
-            res.shape = res.shape[0], res.shape[1], 1
-        res = res.transpose((2, 0, 1))
-        mean_val = mean_val + res
-        datum = caffe.io.array_to_datum(res)
-        str_id = '{:08}'.format(id)
-        id = id +1
-        train_txn.put(str_id.encode('ascii'), datum.SerializeToString())
-        part = lvals[tu[0]][tu[1]].copy()
-        #print part.shape
-        part[:,0] = part[:,0] - rec[0]
-        part[:,1] = part[:,1] - rec[1]
-        la = np.zeros((len(use), map_size, map_size))
-        #for i in range(part.shape[0]):
-        for i in xrange(len(use)):
-            y = (map_size - 1) * part[use[i]][0] / frame.shape[1]
-            x = (map_size - 1) * part[use[i]][1] / frame.shape[0]
-            x = int(round(x))
-            y = int(round(y))
-            if x < 0 or y < 0 or x > map_size-1 or y > map_size-1:
+mat = sio.loadmat(dbdir + 'mpii_human_pose_v1_u12_1.mat')
+re = mat['RELEASE']
+anno = re['annolist'][0][0].squeeze()
+img_train = re['img_train'][0][0].squeeze()
+for i in xrange(img_train.size):
+    ro = anno[i]
+    rect = ro['annorect']
+    if rect.dtype == 'uint8' or rect.dtype.names.count('annopoints') == 0\
+            or rect.dtype.names.count('scale') == 0 or rect.dtype.names.count('objpos') == 0:
+        continue
+    name = str(ro['image'][0][0][0][0])
+    print i, name
+    img = cv2.imread(dbdir + 'images/' + name)
+    print img.shape
+    for j in xrange(rect.size):
+        scale = rect[0, j]['scale'][0][0] * 100
+        px = rect[0, j]['objpos']['x'][0][0][0][0]
+        py = rect[0, j]['objpos']['y'][0][0][0][0]
+        pos = rect[0, j]['annopoints'][0][0][0]
+        for k in xrange(pos.size):
+            if pos['is_visible'][0, k].size == 0 or pos['is_visible'][0, k][0][0] == '0' \
+                    or pos['is_visible'][0, k][0][0] == 0:
                 continue
-            la[i] = gau[map_size-1-x:map_size*2-1-x,map_size-1-y:map_size*2-1-y]
-            hm = cv2.resize(la[i], (img_size, img_size));
-            fu = res/255.0 + hm
-            #cv2.imshow('fuse', fu.transpose((1,2,0)))
-            #cv2.waitKey(0)
-            #cv2.imshow('b',la[i])
-            #cv2.waitKey(0)
-        datum = caffe.io.array_to_datum(la)
-        label_txn.put(str_id.encode('ascii'), datum.SerializeToString())
-        if id % 1000 == 0:
-            train_txn.commit()
-            label_txn.commit()
-            print '----------processed ' + str(id) +' ----------'
-            train_txn = train.begin(write=True)
-            label_txn = label.begin(write=True)
-train_txn.commit()
-label_txn.commit()
-train.close()
-label.close()
-mean_val = mean_val / len(lframe)
-np.save('mean_train.npy', mean_val)
-print str(id) + ' images in total'
+            lx = int(pos['x'][0, k][0][0])
+            ly = int(pos['y'][0, k][0][0])
+            scale = max(scale, 1.1 * abs(lx - px))
+            scale = max(scale, 1.1 * abs(ly - py))
+        scale = int(scale)
+        print px, py, scale
+        # cv2.circle(img, (px, py), 5, (0, 0, 255))
+        rec = np.array([px-scale, py-scale, 2*scale, 2*scale])
+        boxes = makerect(rec, img.shape[0:2])
+        for box in boxes:
+            res = img[box[1]:box[1]+box[3],box[0]:box[0]+box[2]]
+            cv2.imshow('a', res)
+            cv2.waitKey()
+            res = cv2.resize(res, (img_size, img_size))
+            res = res.transpose((2, 0, 1))
+            datum = caffe.io.array_to_datum(res)
+            if img_train[j] == 1:
+                tid += 1
+                str_id = '{:08}'.format(tid)
+                tdata_txn.put(str_id.encode('ascii'), datum.SerializeToString())
+            else:
+                vid += 1
+                str_id = '{:08}'.format(vid)
+                vdata_txn.put(str_id.encode('ascii'), datum.SerializeToString())
+            la = np.zeros((16, map_size, map_size))
+            for k in xrange(pos.size):
+                if pos['is_visible'][0, k].size == 0 or pos['is_visible'][0, k][0][0] == '0' \
+                        or pos['is_visible'][0, k][0][0] == 0:
+                    continue
+                lx = int(pos['x'][0, k][0][0])
+                ly = int(pos['y'][0, k][0][0])
+                if lx >= box[0] and lx <= box[0]+box[2] and ly >= box[1] and ly <= box[1]+box[3]:
+                    jid = pos['id'][0, k][0][0]
+                    lx -= box[0]
+                    ly -= box[1]
+                    lx = lx * (map_size - 1) / box[2]
+                    ly = ly * (map_size - 1) / box[3]
+                    lx = int(round(lx))
+                    ly = int(round(ly))
+                    la[jid] += gau[map_size-1-lx:map_size*2-1-lx,map_size-1-ly:map_size*2-1-ly]
+            for k in xrange(la.shape[0]):
+                fuse = res.transpose((1,2,0))
+                fuse = cv2.cvtColor(fuse, cv2.COLOR_BGR2GRAY)
+                fuse = fuse/255.0 + cv2.resize(la[k], (img_size, img_size))
+                #cv2.imshow('a', fuse)
+                #cv2.imshow('b', la[k])
+                #cv2.waitKey()
+            datum = caffe.io.array_to_datum(la)
+            if img_train[j] == 1:
+                tlabel_txn.put(str_id.encode('ascii'), datum.SerializeToString())
+            else:
+                vlabel_txn.put(str_id.encode('ascii'), datum.SerializeToString())
+        if tid % 1000 == 0:
+            tdata_txn.commit()
+            tlabel_txn.commit()
+            print '----------processed train ' + str(tid) +' ----------'
+            tdata_txn = train_data.begin(write=True)
+            tlabel_txn = train_label.begin(write=True)
+        if vid % 1000 == 0:
+            vdata_txn.commit()
+            vlabel_txn.commit()
+            print '----------processed val ' + str(tid) +' ----------'
+            vdata_txn = val_data.begin(write=True)
+            vlabel_txn = val_label.begin(write=True)
+'''
+        rec[1] = min(img.shape[0], rec[1])
+        rec[3] = min(img.shape[1], rec[3])
+        cv2.rectangle(img, (px-scale, py-scale), (px+scale, py+scale), (255, 0, 0), 5)
+        #cv2.imshow('a',img[rec[0]:rec[1],rec[2]:rec[3]])
+        for k in xrange(pos.size):
+            if pos['is_visible'][0, k].size == 0 or pos['is_visible'][0, k][0][0] == '0' \
+                    or pos['is_visible'][0, k][0][0] == 0:
+                continue
+            lx = int(pos['x'][0, k][0][0])
+            ly = int(pos['y'][0, k][0][0])
+            print lx, ly
+            cv2.circle(img, (lx, ly), 5, (0, 255, 255))
+        cv2.imshow('b', img)
+        cv2.waitKey()
+'''
+tdata_txn.commit()
+tlabel_txn.commit()
+train_data.close()
+train_label.close()
+vdata_txn.commit()
+vlabel_txn.commit()
+val_data.close()
+val_label.close()
+print tid, ' images in total', vid
