@@ -6,7 +6,7 @@ sys.path.insert(0, '../../python')
 import caffe
 
 isColor = False
-isVal = False
+isVal = True
 
 def makerect(rec, shape):
     if rec[2] < rec[3]:
@@ -150,8 +150,9 @@ for fi in range(0, len(lfile), N):
         res[bgmask==0] = bg[bgmask==0]
         res[bgmask!=0] = (res[bgmask!=0] - np.mean(res[bgmask!=0]))*20.0/np.std(res[bgmask!=0])+65
         #print np.mean(res[bgmask!=0])
+        #cv2.imwrite('a.png',res)
         #cv2.imshow('a', res)
-        #cv2.waitKey()
+        #scv2.waitKey()
         if ~isColor:
             res.shape = res.shape[0], res.shape[1], 1
         res = res.transpose((2, 0, 1))
