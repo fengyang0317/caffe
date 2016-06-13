@@ -5,7 +5,8 @@ import sys
 sys.path.insert(0, '../../python')
 import caffe
 
-env = lmdb.open('lmdb_test', readonly=True)
+env = lmdb.open('lmdb_train', readonly=True)
+mean_val = np.load('mean_val.npy')
 with env.begin() as txn:
     '''
     for i in xrange(1000):
@@ -29,6 +30,7 @@ with env.begin() as txn:
         x = caffe.io.datum_to_array(datum)
         print datum.label
         x = x.transpose((1,2,0))
+        x += mean_val
         cv2.imshow('a', x / 255)
         k = cv2.waitKey()
         if k == 27:

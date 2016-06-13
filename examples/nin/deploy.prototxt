@@ -316,3 +316,9 @@ layers {
     stride: 1
   }
 }
+layers {
+  name: "prob"
+  type: SOFTMAX
+  bottom: "pool3"
+  top: "prob"
+}
