@@ -1,6 +1,7 @@
 #!/bin/bash
 
-root_dir=$HOME/data/VOCdevkit/
+#root_dir=$HOME/data/VOCdevkit/
+root_dir=/home/yfeng23/lab/fast-rcnn/VOCdevkit/VOCdevkit/
 sub_dir=ImageSets/Main
 bash_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for dataset in trainval test
@@ -10,7 +11,7 @@ do
   then
     rm -f $dst_file
   fi
-  for name in VOC2007 VOC2012
+  for name in VOC2007 # VOC2012
   do
     if [[ $dataset == "test" && $name == "VOC2012" ]]
     then

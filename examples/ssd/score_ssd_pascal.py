@@ -1,4 +1,6 @@
 from __future__ import print_function
+import sys
+sys.path.insert(0, 'python')
 import caffe
 from caffe.model_libs import *
 from google.protobuf import text_format
@@ -8,7 +10,6 @@ import os
 import shutil
 import stat
 import subprocess
-import sys
 
 # Add extra layers on top of a "base" network (e.g. VGGNet or Inception).
 def AddExtraLayers(net, use_batchnorm=True):

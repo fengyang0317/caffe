@@ -1,4 +1,6 @@
 from __future__ import print_function
+import sys
+sys.path.insert(0, 'python')
 import caffe
 from caffe.model_libs import *
 from google.protobuf import text_format
@@ -282,7 +284,7 @@ clip = True
 
 # Solver parameters.
 # Defining which GPUs to use.
-gpus = "0,1,2,3"
+gpus = "0"
 gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
