@@ -11,11 +11,11 @@ layer {
     mirror: true
  }
  image_data_param {
-    source: "train.txt"
-    batch_size: 4
+    source: "/home/yfeng23/lab/fb.resnet.torch/AsianFace/list_train.txt"
+    batch_size: 16
     shuffle: true
-    new_width: 256
-    new_height: 256
+    #new_width: 256
+    #new_height: 256
   }
   top: "data"
   top: "label"
@@ -32,10 +32,10 @@ layer {
     mirror: false
  }
  image_data_param {
-    source: "test.txt"
-    batch_size: 10
-    new_width: 256
-    new_height: 256
+    source: "/home/yfeng23/lab/fb.resnet.torch/AsianFace/list_test.txt"
+    batch_size: 1
+    #new_width: 256
+    #new_height: 256
   }
   top: "data"
   top: "label"
@@ -485,7 +485,7 @@ layer {
   }
 }
 layer {
-  name: "fc8_wechat"
+  name: "fc8_asianface"
   bottom: "fc7"
   top: "fc8"
   type: "InnerProduct"
@@ -498,7 +498,7 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 2
+    num_output: 3
     weight_filler {
       type: "gaussian"
       std: 0.01
@@ -522,7 +522,7 @@ layer {
   bottom: "fc8"
   bottom: "label"
   top: "accuracy@1"
-  include: { phase: TEST }
+  #include: { phase: TEST }
   accuracy_param {
     top_k: 1
   }

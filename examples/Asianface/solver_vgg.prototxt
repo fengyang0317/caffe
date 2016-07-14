@@ -1,21 +1,21 @@
 net: "./vgg_train_val.prototxt"
-test_iter: 8
-test_interval: 200 
-test_initialization: true
+test_iter: 7913
+test_interval: 5000 
+#test_initialization: false
 
 
-max_iter: 10000	
-base_lr: 0.000001			
+max_iter: 500000	
+base_lr: 0.0001			
 lr_policy: "step"
 gamma: 0.1
-stepsize: 5000
+stepsize: 50000
 
 momentum: 0.9			
 weight_decay: 0.0002 	
 display: 20
 
 snapshot: 5000
-snapshot_prefix: "vgg_finetune_wechat"
+snapshot_prefix: "vgg_finetune_asianface"
 solver_mode: GPU
 
 device_id: 0 
