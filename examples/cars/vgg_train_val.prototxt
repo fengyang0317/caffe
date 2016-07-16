@@ -1,7 +1,7 @@
-name: "VGG_ILSVRC_16_layers_car_163"
-layers {
+name: "VGG_ILSVRC_16_layer_car_163"
+layer {
   name: "data"
-  type: IMAGE_DATA
+  type: "ImageData"
   include {
     phase: TRAIN
   }
@@ -12,7 +12,7 @@ layers {
  }
  image_data_param {
     source: "train.txt"
-    batch_size: 64
+    batch_size: 4
     shuffle: true
     new_width: 256
     new_height: 256
@@ -20,9 +20,9 @@ layers {
   top: "data"
   top: "label"
 }
-layers {
+layer {
   name: "data"
-  type: IMAGE_DATA
+  type: "ImageData"
   include {
     phase: TEST
   }
@@ -40,7 +40,7 @@ layers {
   top: "data"
   top: "label"
 }
-layers {
+layer {
   bottom: "data"
   top: "conv1_1"
   name: "conv1_1"
@@ -59,17 +59,17 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv1_1"
   top: "conv1_1"
   name: "relu1_1"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv1_1"
   top: "conv1_2"
   name: "conv1_2"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -84,28 +84,28 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv1_2"
   top: "conv1_2"
   name: "relu1_2"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv1_2"
   top: "pool1"
   name: "pool1"
-  type: POOLING
+  type: "Pooling"
   pooling_param {
     pool: MAX
     kernel_size: 2
     stride: 2
   }
 }
-layers {
+layer {
   bottom: "pool1"
   top: "conv2_1"
   name: "conv2_1"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -120,17 +120,17 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv2_1"
   top: "conv2_1"
   name: "relu2_1"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv2_1"
   top: "conv2_2"
   name: "conv2_2"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -145,28 +145,28 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv2_2"
   top: "conv2_2"
   name: "relu2_2"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv2_2"
   top: "pool2"
   name: "pool2"
-  type: POOLING
+  type: "Pooling"
   pooling_param {
     pool: MAX
     kernel_size: 2
     stride: 2
   }
 }
-layers {
+layer {
   bottom: "pool2"
   top: "conv3_1"
   name: "conv3_1"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -181,17 +181,17 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv3_1"
   top: "conv3_1"
   name: "relu3_1"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv3_1"
   top: "conv3_2"
   name: "conv3_2"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -206,17 +206,17 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv3_2"
   top: "conv3_2"
   name: "relu3_2"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv3_2"
   top: "conv3_3"
   name: "conv3_3"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -231,28 +231,28 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv3_3"
   top: "conv3_3"
   name: "relu3_3"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv3_3"
   top: "pool3"
   name: "pool3"
-  type: POOLING
+  type: "Pooling"
   pooling_param {
     pool: MAX
     kernel_size: 2
     stride: 2
   }
 }
-layers {
+layer {
   bottom: "pool3"
   top: "conv4_1"
   name: "conv4_1"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -267,17 +267,17 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv4_1"
   top: "conv4_1"
   name: "relu4_1"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv4_1"
   top: "conv4_2"
   name: "conv4_2"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -292,17 +292,17 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv4_2"
   top: "conv4_2"
   name: "relu4_2"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv4_2"
   top: "conv4_3"
   name: "conv4_3"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -317,28 +317,28 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv4_3"
   top: "conv4_3"
   name: "relu4_3"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv4_3"
   top: "pool4"
   name: "pool4"
-  type: POOLING
+  type: "Pooling"
   pooling_param {
     pool: MAX
     kernel_size: 2
     stride: 2
   }
 }
-layers {
+layer {
   bottom: "pool4"
   top: "conv5_1"
   name: "conv5_1"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -353,17 +353,17 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv5_1"
   top: "conv5_1"
   name: "relu5_1"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv5_1"
   top: "conv5_2"
   name: "conv5_2"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -378,17 +378,17 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv5_2"
   top: "conv5_2"
   name: "relu5_2"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv5_2"
   top: "conv5_3"
   name: "conv5_3"
-  type: CONVOLUTION
+  type: "Convolution"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -403,28 +403,28 @@ layers {
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv5_3"
   top: "conv5_3"
   name: "relu5_3"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv5_3"
   top: "pool5"
   name: "pool5"
-  type: POOLING
+  type: "Pooling"
   pooling_param {
     pool: MAX
     kernel_size: 2
     stride: 2
   }
 }
-layers {
+layer {
   bottom: "pool5"
   top: "fc6"
   name: "fc6"
-  type: INNER_PRODUCT
+  type: "InnerProduct"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -437,26 +437,26 @@ layers {
     num_output: 4096
   }
 }
-layers {
+layer {
   bottom: "fc6"
   top: "fc6"
   name: "relu6"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "fc6"
   top: "fc6"
   name: "drop6"
-  type: DROPOUT
+  type: "Dropout"
   dropout_param {
     dropout_ratio: 0.5
   }
 }
-layers {
+layer {
   bottom: "fc6"
   top: "fc7"
   name: "fc7"
-  type: INNER_PRODUCT
+  type: "InnerProduct"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -469,26 +469,26 @@ layers {
     num_output: 4096
   }
 }
-layers {
+layer {
   bottom: "fc7"
   top: "fc7"
   name: "relu7"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "fc7"
   top: "fc7"
   name: "drop7"
-  type: DROPOUT
+  type: "Dropout"
   dropout_param {
     dropout_ratio: 0.5
   }
 }
-layers {
+layer {
   name: "fc8_cars_163"
   bottom: "fc7"
   top: "fc8"
-  type: INNER_PRODUCT
+  type: "InnerProduct"
   param {
     lr_mult: 10
     decay_mult: 1
@@ -509,16 +509,16 @@ layers {
     }
   }
 }
-layers {
+layer {
   name: "loss"
-  type: SOFTMAX_LOSS
+  type: "SoftmaxWithLoss"
   bottom: "fc8"
   bottom: "label"
   top: "loss/loss"
 }
-layers {
+layer {
   name: "accuracy/top1"
-  type: ACCURACY
+  type: "Accuracy"
   bottom: "fc8"
   bottom: "label"
   top: "accuracy@1"
@@ -527,9 +527,9 @@ layers {
     top_k: 1
   }
 }
-layers {
+layer {
   name: "accuracy/top5"
-  type: ACCURACY
+  type: "Accuracy"
   bottom: "fc8"
   bottom: "label"
   top: "accuracy@5"
