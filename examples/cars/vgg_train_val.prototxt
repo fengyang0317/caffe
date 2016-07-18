@@ -1,4 +1,4 @@
-name: "VGG_ILSVRC_16_layer_car_163"
+name: "VGG_ILSVRC_16_layer_cars"
 layer {
   name: "data"
   type: "ImageData"
@@ -11,11 +11,12 @@ layer {
     mirror: true
  }
  image_data_param {
-    source: "train.txt"
-    batch_size: 4
+    source: "list_train.txt"
+    batch_size: 32
     shuffle: true
     new_width: 256
     new_height: 256
+	root_folder: "/u/yfeng23/disk/CompCars/"
   }
   top: "data"
   top: "label"
@@ -32,10 +33,11 @@ layer {
     mirror: false
  }
  image_data_param {
-    source: "test.txt"
-    batch_size: 10
+    source: "list_test.txt"
+    batch_size: 1
     new_width: 256
     new_height: 256
+	root_folder: "/u/yfeng23/disk/CompCars/"
   }
   top: "data"
   top: "label"
@@ -485,7 +487,7 @@ layer {
   }
 }
 layer {
-  name: "fc8_cars_163"
+  name: "fc8_cars"
   bottom: "fc7"
   top: "fc8"
   type: "InnerProduct"
@@ -522,19 +524,8 @@ layer {
   bottom: "fc8"
   bottom: "label"
   top: "accuracy@1"
-  include: { phase: TEST }
+  #include: { phase: TEST }
   accuracy_param {
     top_k: 1
-  }
-}
-layer {
-  name: "accuracy/top5"
-  type: "Accuracy"
-  bottom: "fc8"
-  bottom: "label"
-  top: "accuracy@5"
-  include: { phase: TEST }
-  accuracy_param {
-    top_k: 5
   }
 }
