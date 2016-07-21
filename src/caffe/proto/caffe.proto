@@ -403,6 +403,8 @@ message LayerParameter {
   optional ThresholdParameter threshold_param = 128;
   optional TileParameter tile_param = 138;
   optional WindowDataParameter window_data_param = 129;
+  
+  optional HistParameter hist_param = 1000;
 }
 
 // Message that stores parameters used to apply transformation
@@ -888,6 +890,29 @@ message PoolingParameter {
   optional PoolMethod pool = 1 [default = MAX]; // The pooling method
   // Pad, kernel size, and stride are all given as a single value for equal
   // dimensions in height and width or as Y, X pairs.
+  optional uint32 pad = 4 [default = 0]; // The padding size (equal in Y, X)
+  optional uint32 pad_h = 9 [default = 0]; // The padding height
+  optional uint32 pad_w = 10 [default = 0]; // The padding width
+  optional uint32 kernel_size = 2; // The kernel size (square)
+  optional uint32 kernel_h = 5; // The kernel height
+  optional uint32 kernel_w = 6; // The kernel width
+  optional uint32 stride = 3 [default = 1]; // The stride (equal in Y, X)
+  optional uint32 stride_h = 7; // The stride height
+  optional uint32 stride_w = 8; // The stride width
+  enum Engine {
+    DEFAULT = 0;
+    CAFFE = 1;
+    CUDNN = 2;
+  }
+  optional Engine engine = 11 [default = DEFAULT];
+  // If global_pooling then it will pool over the size of the bottom by doing
+  // kernel_h = bottom->height and kernel_w = bottom->width
+  optional bool global_pooling = 12 [default = false];
+}
+
+message HistParameter {
+  repeated double center = 1; // The center for histogram
+  optional double sigma = 13 [default = 1]; // sigma for exp()
   optional uint32 pad = 4 [default = 0]; // The padding size (equal in Y, X)
   optional uint32 pad_h = 9 [default = 0]; // The padding height
   optional uint32 pad_w = 10 [default = 0]; // The padding width

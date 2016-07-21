@@ -91,14 +91,37 @@ layer {
   }
 }
 layer {
-  name: "pool2"
-  type: "Pooling"
+  name: "bn"
+  type: "BatchNorm"
+  bottom: "conv2"
+  top: "conv2"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  batch_norm_param {
+    eps: 0.001
+  }
+}
+layer {
+  name: "hist"
+  type: "Hist"
   bottom: "conv2"
   top: "pool2"
-  pooling_param {
-    pool: MAX
-    kernel_size: 2
+  hist_param {
+    kernel_size: 4
     stride: 2
+	center: 0
+	center: 1
+	center: -1
   }
 }
 layer {
