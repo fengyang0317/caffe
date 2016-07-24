@@ -80,7 +80,8 @@ bool SatisfySampleConstraint(const NormalizedBBox& sampled_bbox,
   return found;
 }
 
-void SampleBBox(const Sampler& sampler, NormalizedBBox* sampled_bbox) {
+void SampleBBox(const float aspect, const Sampler& sampler,
+                NormalizedBBox* sampled_bbox) {
   // Get random scale.
   CHECK_GE(sampler.max_scale(), sampler.min_scale());
   CHECK_GT(sampler.min_scale(), 0.);
@@ -99,6 +100,7 @@ void SampleBBox(const Sampler& sampler, NormalizedBBox* sampled_bbox) {
                                            1 / std::pow(scale, 2.));
   caffe_rng_uniform(1, min_aspect_ratio, max_aspect_ratio, &aspect_ratio);
 
+  aspect_ratio /= aspect;
   // Figure out bbox dimension.
   float bbox_width = scale * sqrt(aspect_ratio);
   float bbox_height = scale / sqrt(aspect_ratio);
@@ -116,6 +118,7 @@ void SampleBBox(const Sampler& sampler, NormalizedBBox* sampled_bbox) {
 
 void GenerateSamples(const NormalizedBBox& source_bbox,
                      const vector<NormalizedBBox>& object_bboxes,
+                     const float aspect,
                      const BatchSampler& batch_sampler,
                      vector<NormalizedBBox>* sampled_bboxes) {
   int found = 0;
@@ -126,7 +129,7 @@ void GenerateSamples(const NormalizedBBox& source_bbox,
     }
     // Generate sampled_bbox in the normalized space [0, 1].
     NormalizedBBox sampled_bbox;
-    SampleBBox(batch_sampler.sampler(), &sampled_bbox);
+    SampleBBox(aspect, batch_sampler.sampler(), &sampled_bbox);
     // Transform the sampled_bbox w.r.t. source_bbox.
     LocateBBox(source_bbox, sampled_bbox, &sampled_bbox);
     // Determine if the sampled bbox is positive or negative by the constraint.
@@ -151,8 +154,8 @@ void GenerateBatchSamples(const AnnotatedDatum& anno_datum,
       unit_bbox.set_ymin(0);
       unit_bbox.set_xmax(1);
       unit_bbox.set_ymax(1);
-      GenerateSamples(unit_bbox, object_bboxes, batch_samplers[i],
-                      sampled_bboxes);
+      GenerateSamples(unit_bbox, object_bboxes, anno_datum.aspect(),
+                      batch_samplers[i], sampled_bboxes);
     }
   }
 }

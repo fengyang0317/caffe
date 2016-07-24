@@ -262,6 +262,7 @@ bool ReadXMLToAnnotatedDatum(const string& labelfile, const int img_height,
   try {
     height = pt.get<int>("annotation.size.height");
     width = pt.get<int>("annotation.size.width");
+    anno_datum->set_aspect(1.0 * width / height);
   } catch (const ptree_error &e) {
     LOG(WARNING) << "When parsing " << labelfile << ": " << e.what();
     height = img_height;
