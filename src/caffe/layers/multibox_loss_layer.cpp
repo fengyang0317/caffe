@@ -269,7 +269,8 @@ void MultiBoxLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
           }
         }
         // Pick top num_neg negatives.
-        num_neg = std::min(static_cast<int>(num_pos * neg_pos_ratio_), num_neg);
+        num_neg = std::min(static_cast<int>(num_pos * neg_pos_ratio_) + 1,
+                            num_neg);
         std::sort(scores_indices.begin(), scores_indices.end(),
                   SortScorePairDescend<int>);
         for (int n = 0; n < num_neg; ++n) {
