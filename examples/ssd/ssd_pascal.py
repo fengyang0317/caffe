@@ -229,7 +229,7 @@ mbox_source_layers = ['res4a_0', 'res5a_0', 'res6a_0', 'res7a_0']
 
 min_sizes = [20, 40, 80, 160]
 max_sizes = [[], [], [], []]
-aspect_ratios = [[2], [2], [2], [2]]
+aspect_ratios = [[0.5, 0.33], [0.5, 0.33], [0.5, 0.33], [0.5, 0.33]]
 # L2 normalize conv4_3.
 normalizations = [-1, -1, -1, -1]
 # variance used to encode/decode prior bboxes.
@@ -295,7 +295,7 @@ solver_param = {
     'snapshot_after_train': True,
     # Test parameters
     'test_iter': [test_iter],
-    'test_interval': 10000,
+    'test_interval': 100000,
     'eval_type': "detection",
     'ap_version': "11point",
     'test_initialization': False,
