@@ -105,6 +105,15 @@ void SampleBBox(const float aspect, const Sampler& sampler,
   float bbox_width = scale * sqrt(aspect_ratio);
   float bbox_height = scale / sqrt(aspect_ratio);
 
+  if (bbox_width > 1) {
+    bbox_height /= bbox_width;
+    bbox_width = 1;
+  }
+  if (bbox_height > 1) {
+    bbox_width /= bbox_height;
+    bbox_height = 1;
+  }
+
   // Figure out top left coordinates.
   float w_off, h_off;
   caffe_rng_uniform(1, 0.f, 1 - bbox_width, &w_off);
