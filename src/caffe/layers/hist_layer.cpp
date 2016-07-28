@@ -164,6 +164,7 @@ void HistLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
   const Dtype* bottom_data = bottom[0]->cpu_data();
   const Dtype* top_diff = top[0]->cpu_diff();
   Dtype* bottom_diff = bottom[0]->mutable_cpu_diff();
+  Dtype dif = 0;
   caffe_set(bottom[0]->count(), Dtype(0), bottom_diff);
   for (int n = 0; n < top[0]->num(); ++n) {
     for (int c = 0; c < channels_; ++c) {
@@ -180,9 +181,10 @@ void HistLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
           wend = min(wend, width_);
           for (int h = hstart; h < hend; ++h) {
             for (int w = wstart; w < wend; ++w) {
+              dif = center_[c % center_.size()] - bottom_data[h * width_ + w];
               bottom_diff[h * width_ + w] +=
-                2 * top_diff[ph * pooled_width_ + pw] *
-                (bottom_data[h * width_ + w] - center_[c % center_.size()]) /
+                top_diff[ph * pooled_width_ + pw] *
+                2 * exp(-dif * dif / sigma_) * dif /
                 sigma_ / pool_size;
             }
           }

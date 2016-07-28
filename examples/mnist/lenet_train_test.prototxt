@@ -8,10 +8,10 @@ layer {
     phase: TRAIN
   }
   transform_param {
-    scale: 0.00390625
+    scale: 0.00392156862745
   }
   data_param {
-    source: "examples/mnist/mnist_train_lmdb"
+    source: "mnist_train_lmdb"
     batch_size: 64
     backend: LMDB
   }
@@ -25,10 +25,10 @@ layer {
     phase: TEST
   }
   transform_param {
-    scale: 0.00390625
+    scale: 0.00392156862745
   }
   data_param {
-    source: "examples/mnist/mnist_test_lmdb"
+    source: "mnist_test_lmdb"
     batch_size: 100
     backend: LMDB
   }
@@ -120,8 +120,6 @@ layer {
     kernel_size: 4
     stride: 2
 	center: 0
-	center: 1
-	center: -1
   }
 }
 layer {
