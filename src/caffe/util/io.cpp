@@ -202,7 +202,7 @@ bool ReadRichImageToAnnotatedDatum(const string& filename,
   }
   anno_datum->clear_annotation_group();
   if (!boost::filesystem::exists(labelfile)) {
-    return true;
+    return false;
   }
   switch (type) {
     case AnnotatedDatum_AnnotationType_BBOX:
@@ -262,6 +262,7 @@ bool ReadXMLToAnnotatedDatum(const string& labelfile, const int img_height,
   try {
     height = pt.get<int>("annotation.size.height");
     width = pt.get<int>("annotation.size.width");
+    anno_datum->set_aspect(1.0 * width / height);
   } catch (const ptree_error &e) {
     LOG(WARNING) << "When parsing " << labelfile << ": " << e.what();
     height = img_height;

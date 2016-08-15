@@ -152,6 +152,7 @@ message AnnotatedDatum {
   optional AnnotationType type = 2;
   // Each group contains annotation for a particular class.
   repeated AnnotationGroup annotation_group = 3;
+  optional float aspect = 100 [default = 1]; // aspect ratio
 }
 
 message FillerParameter {
