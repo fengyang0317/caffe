@@ -54,7 +54,7 @@ for i in imgs:
     cv2.imshow('a', im)
     na = os.path.split(i)[1]
     cv2.imwrite(os.path.join('output', na), im)
-    k = cv2.waitKey(1) & 0xff
+    k = cv2.waitKey() & 0xff
     if k == 27:
         break
     n += 1

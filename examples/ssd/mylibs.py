@@ -7,27 +7,23 @@ c1_kwargs = {
     'weight_filler': dict(type='xavier'),
     'bias_term': False,
 }
-bn_kwargs = {
-    'param': [dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0), dict(lr_mult=0, decay_mult=0)],
-    'eps': 0.001,
-}
 
 
 def wide_basic(net, from_layer, prefix, nInputPlane, nOutputPlane, stride):
     #assert from_layer in net.keys()
 
-    bn_branch2a_name = '{}_bn_branch2a'.format(prefix)
-    net[bn_branch2a_name] = L.BatchNorm(net[from_layer], in_place=True, **bn_kwargs)
+    ln_branch2a_name = '{}_ln_branch2a'.format(prefix)
+    net[ln_branch2a_name] = L.LayerNorm(net[from_layer], in_place=True, eps=0.001)
     relu_branch2a_name = '{}_relu_branch2a'.format(prefix)
-    net[relu_branch2a_name] = L.ReLU(net[bn_branch2a_name], in_place=True)
+    net[relu_branch2a_name] = L.ReLU(net[ln_branch2a_name], in_place=True)
     branch2a_name = '{}_branch2a'.format(prefix)
     net[branch2a_name] = L.Convolution(net[relu_branch2a_name], num_output=nOutputPlane, kernel_size=3, pad=1,
                                        stride=stride, **c1_kwargs)
 
-    bn_branch2b_name = '{}_bn_branch2b'.format(prefix)
-    net[bn_branch2b_name] = L.BatchNorm(net[branch2a_name], in_place=True, **bn_kwargs)
+    ln_branch2b_name = '{}_ln_branch2b'.format(prefix)
+    net[ln_branch2b_name] = L.LayerNorm(net[branch2a_name], in_place=True, eps=0.001)
     relu_branch2b_name = '{}_relu_branch2b'.format(prefix)
-    net[relu_branch2b_name] = L.ReLU(net[bn_branch2b_name], in_place=True)
+    net[relu_branch2b_name] = L.ReLU(net[ln_branch2b_name], in_place=True)
     branch2b_name = '{}_branch2b'.format(prefix)
     net[branch2b_name] = L.Convolution(net[relu_branch2b_name], num_output=nOutputPlane, kernel_size=3, pad=1,
                                        stride=1, **c1_kwargs)
@@ -62,9 +58,9 @@ def WideResNetBody(net, from_layer, depth = 10, widen_factor = 1):
     layer(net, 'res3a_{}'.format(n-1), 'res4a', nStages[2], nStages[3], n, 2)
     layer(net, 'res4a_{}'.format(n-1), 'res5a', nStages[3], nStages[4], n, 2)
     layer(net, 'res5a_{}'.format(n-1), 'res6a', nStages[4], nStages[5], n, 2)
-    layer(net, 'res6a_{}'.format(n-1), 'res7a', nStages[5], nStages[6], n, 2)
-    net['bn'] = L.BatchNorm(net['res7a_{}'.format(n-1)], in_place=True, **bn_kwargs)
-    net['relu'] = L.ReLU(net['bn'], in_place=True)
+    #layer(net, 'res6a_{}'.format(n-1), 'res7a', nStages[5], nStages[6], n, 2)
+    net['ln'] = L.LayerNorm(net['res6a_{}'.format(n-1)], in_place=True, eps=0.001)
+    net['relu'] = L.ReLU(net['ln'], in_place=True)
 
     '''
     net.ip6 = L.Convolution(net['relu'], num_output=64, kernel_size=3, pad=1, stride=1, **c1_kwargs)

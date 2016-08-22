@@ -12,7 +12,7 @@ if not os.path.exists('output'):
 
 caffe.set_mode_gpu()
 net=caffe.Net('models/ResNet/cars/SSD_140x100/deploy.prototxt',
-              'models/ResNet/cars/SSD_140x100/comp_cars_SSD_140x100_iter_10000.caffemodel',
+              'models/ResNet/cars/SSD_140x100/comp_cars_SSD_140x100_iter_40000.caffemodel',
                 caffe.TEST)
 
 mu = np.array([119, 121, 124])
@@ -50,7 +50,7 @@ for i in imgs:
     bbox = output['detection_out'][0,0]
     bbox[:, 3:6:2] *= width
     bbox[:, 4:7:2] *= height
-    for j in list(np.nonzero(bbox[:, 2] > 0.9)[0]):
+    for j in list(np.nonzero(bbox[:, 2] > 0.99)[0]):
         cv2.rectangle(im, (int(bbox[j, 3]), int(bbox[j, 4])),
                       (int(bbox[j, 5]), int(bbox[j, 6])), (255, 0, 0))
     cv2.imshow('a', im)
