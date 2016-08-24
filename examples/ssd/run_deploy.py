@@ -1,22 +1,23 @@
 import numpy as np
 import sys
+import cv2
+cv2.imshow('a', np.zeros((10, 10)))
 sys.path.insert(0, 'python')
 import caffe
 import os
-import cv2
 import time
 
 if not os.path.exists('output'):
     os.mkdir('output')
 
 caffe.set_mode_gpu()
-net = caffe.Net('models/ResNet/cars/SSD_140x100/deploy.prototxt',
-                'models/ResNet/cars/SSD_140x100/comp_cars_SSD_140x100_iter_10000.caffemodel',
+net = caffe.Net('models/ResNet/rail/SSD_200x200/deploy_.prototxt',
+                'models/ResNet/rail/SSD_200x200/rail_SSD_200x200_iter_60000.caffemodel',
                 caffe.TEST)
 
-mu = np.array([119, 121, 124])
+mu = np.array([110, 108, 101])
 
-imdir = '/home/yfeng23/lab/luxury_cars/data'
+imdir = '/home/de566945/yang/rail/imgs'
 imgs = os.listdir(imdir)
 
 #net.blobs['data'].reshape(1, 3, 180, 320)
@@ -47,11 +48,11 @@ for i in imgs:
     tsum += en - st
     bbox = output['detection_out'][0,0]
     for j in xrange(bbox.shape[0]):
-        if bbox[j, 2] > 0.5:
+        if bbox[j, 2] > 0.1:
             cv2.rectangle(im,(int(bbox[j, 3] * width), int(bbox[j, 4] * height)),
                               (int(bbox[j, 5] * width), int(bbox[j, 6] * height)), (255, 0, 0))
     cv2.imshow('a', im)
-    cv2.waitKey()
+    cv2.waitKey(1)
     cv2.imwrite(os.path.join('output', i), im)
     n += 1
 print tsum, n

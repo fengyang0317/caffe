@@ -27,18 +27,18 @@ resume_training = True
 remove_old_models = False
 
 # The database file for training data. Created by data/VOC0712/create_data.sh
-train_data = "/home/yfeng23/intern/face/lmdb_train"
+train_data = "/home/de566945/yang/rail/lmdb_train"
 # The database file for testing data. Created by data/VOC0712/create_data.sh
 test_data = "/home/yfeng23/intern/face/lmdb_val"
 # Specify the batch sampler.
-resize_width = 300
-resize_height = 300
+resize_width = 200
+resize_height = 200
 resize = "{}x{}".format(resize_width, resize_height)
 batch_sampler = [
         {
                 'sampler': {
-                        'min_scale': 0.1,
-                        'max_scale': 0.9,
+                        'min_scale': 0.05,
+                        'max_scale': 1.0,
                         'min_aspect_ratio': 0.9,
                         'max_aspect_ratio': 1.1,
                         },
@@ -47,8 +47,8 @@ batch_sampler = [
         },
         {
                 'sampler': {
-                        'min_scale': 0.1,
-                        'max_scale': 0.5,
+                        'min_scale': 0.05,
+                        'max_scale': 1.0,
                         'min_aspect_ratio': 0.9,
                         'max_aspect_ratio': 1.1,
                         },
@@ -60,8 +60,8 @@ batch_sampler = [
         },
         {
                 'sampler': {
-                        'min_scale': 0.1,
-                        'max_scale': 0.5,
+                        'min_scale': 0.05,
+                        'max_scale': 1.0,
                         'min_aspect_ratio': 0.9,
                         'max_aspect_ratio': 1.1,
                         },
@@ -73,8 +73,8 @@ batch_sampler = [
         },
         {
                 'sampler': {
-                        'min_scale': 0.1,
-                        'max_scale': 0.5,
+                        'min_scale': 0.05,
+                        'max_scale': 1.0,
                         'min_aspect_ratio': 0.9,
                         'max_aspect_ratio': 1.1,
                         },
@@ -86,8 +86,8 @@ batch_sampler = [
         },
         {
                 'sampler': {
-                        'min_scale': 0.1,
-                        'max_scale': 0.5,
+                        'min_scale': 0.05,
+                        'max_scale': 1.0,
                         'min_aspect_ratio': 0.9,
                         'max_aspect_ratio': 1.1,
                         },
@@ -99,8 +99,8 @@ batch_sampler = [
         },
         {
                 'sampler': {
-                        'min_scale': 0.1,
-                        'max_scale': 0.5,
+                        'min_scale': 0.05,
+                        'max_scale': 1.0,
                         'min_aspect_ratio': 0.9,
                         'max_aspect_ratio': 1.1,
                         },
@@ -112,8 +112,8 @@ batch_sampler = [
         },
         {
                 'sampler': {
-                        'min_scale': 0.1,
-                        'max_scale': 0.5,
+                        'min_scale': 0.05,
+                        'max_scale': 1.0,
                         'min_aspect_ratio': 0.9,
                         'max_aspect_ratio': 1.1,
                         },
@@ -126,7 +126,7 @@ batch_sampler = [
     ]
 train_transform_param = {
         'mirror': True,
-        'mean_value': [106, 113, 123],
+        'mean_value': [110, 108, 101],
         'resize_param': {
                 'prob': 1,
                 'resize_mode': P.Resize.WARP,
@@ -145,7 +145,7 @@ train_transform_param = {
             }
         }
 test_transform_param = {
-    'mean_value': [106, 113, 123],
+    'mean_value': [110, 108, 101],
     'resize_param': {
         'prob': 1,
         'resize_mode': P.Resize.WARP,
@@ -168,16 +168,16 @@ else:
 # Modify the job name if you want.
 job_name = "SSD_{}".format(resize)
 # The name of the model. Modify it if you want.
-model_name = "face_{}".format(job_name)
+model_name = "rail_{}".format(job_name)
 
 # Directory which stores the model .prototxt file.
-save_dir = "models/ResNet/face/{}".format(job_name)
+save_dir = "models/ResNet/rail/{}".format(job_name)
 # Directory which stores the snapshot of models.
-snapshot_dir = "models/ResNet/face/{}".format(job_name)
+snapshot_dir = "models/ResNet/rail/{}".format(job_name)
 # Directory which stores the job script and log file.
-job_dir = "jobs/ResNet/face/{}".format(job_name)
+job_dir = "jobs/ResNet/rail/{}".format(job_name)
 # Directory which stores the detection results.
-output_result_dir = "{}/data/face/{}/Main".format(os.environ['HOME'], job_name)
+output_result_dir = "{}/data/rail/{}/Main".format(os.environ['HOME'], job_name)
 
 # model definition files.
 train_net_file = "{}/train.prototxt".format(save_dir)
@@ -192,10 +192,10 @@ job_file = "{}/{}.sh".format(job_dir, model_name)
 # Stores the test image names and sizes. Created by data/VOC0712/create_list.sh
 name_size_file = "/home/yfeng23/intern/face/test_name_size.txt"
 # Stores LabelMapItem.
-label_map_file = "/home/yfeng23/intern/face/labelmap_face.prototxt"
+label_map_file = "/home/de566945/yang/rail/labelmap_rail.prototxt"
 
 # MultiBoxLoss parameters.
-num_classes = 2
+num_classes = 5
 share_location = True
 background_label_id=0
 train_on_diff_gt = True
@@ -225,13 +225,14 @@ loss_param = {
 
 # parameters for generating priors.
 # minimum dimension of input image
-mbox_source_layers = ['res4a_0', 'res5a_0', 'res6a_0', 'res7a_0']
+mbox_source_layers = ['res3a_0', 'res4a_0', 'res5a_0', 'res6a_0', 'res7a_0']
 
-min_sizes = [20, 40, 80, 160]
-max_sizes = [[], [], [], []]
-aspect_ratios = [[0.5, 0.33], [0.5, 0.33], [0.5, 0.33], [0.5, 0.33]]
+min_sizes = [10, 20, 40, 80, 160]
+max_sizes = [[], [], [], [], []]
+aspect_ratios = [[0.2, 0.33, 0.5, 2], [0.2, 0.33, 0.5, 2], [0.2, 0.33, 0.5, 2],
+                 [0.2, 0.33, 0.5, 2], [0.2, 0.33, 0.5, 2]]
 # L2 normalize conv4_3.
-normalizations = [-1, -1, -1, -1]
+normalizations = [-1, -1, -1, -1, -1]
 # variance used to encode/decode prior bboxes.
 if code_type == P.PriorBox.CENTER_SIZE:
   prior_variance = [0.1, 0.1, 0.2, 0.2]
@@ -247,8 +248,8 @@ gpulist = gpus.split(",")
 num_gpus = len(gpulist)
 
 # Divide the mini-batch to different GPUs.
-batch_size = 16
-accum_batch_size = 16
+batch_size = 32
+accum_batch_size = 32
 iter_size = accum_batch_size / batch_size
 solver_mode = P.Solver.CPU
 device_id = 0
@@ -292,7 +293,7 @@ solver_param = {
     'debug_info': False,
     'snapshot_after_train': True,
     # Test parameters
-    'test_iter': [test_iter],
+    #'test_iter': [test_iter],
     'test_interval': 100000,
     'eval_type': "detection",
     'ap_version': "11point",
@@ -330,7 +331,7 @@ det_eval_param = {
 ### Hopefully you don't need to change the following ###
 # Check file.
 check_if_exist(train_data)
-check_if_exist(test_data)
+#check_if_exist(test_data)
 check_if_exist(label_map_file)
 #check_if_exist(pretrain_model)
 make_if_not_exist(save_dir)
@@ -424,7 +425,7 @@ shutil.copy(deploy_net_file, job_dir)
 # Create solver.
 solver = caffe_pb2.SolverParameter(
         train_net=train_net_file,
-        test_net=[test_net_file],
+        #test_net=[test_net_file],
         snapshot_prefix=snapshot_prefix,
         **solver_param)
 
@@ -442,6 +443,7 @@ for file in os.listdir(snapshot_dir):
       max_iter = iter
 
 #train_src_param = '--weights="{}" \\\n'.format(pretrain_model)
+train_scr_param = ''
 if resume_training:
   if max_iter > 0:
     train_src_param = '--snapshot="{}_iter_{}.solverstate" \\\n'.format(snapshot_prefix, max_iter)
@@ -465,7 +467,7 @@ with open(job_file, 'w') as f:
   f.write('cd {}\n'.format(caffe_root))
   f.write('./build/tools/caffe train \\\n')
   f.write('--solver="{}" \\\n'.format(solver_file))
-  #f.write(train_src_param)
+  f.write(train_src_param)
   if solver_param['solver_mode'] == P.Solver.GPU:
     f.write('--gpu {} 2>&1 | tee {}/{}.log\n'.format(gpus, job_dir, model_name))
   else:
